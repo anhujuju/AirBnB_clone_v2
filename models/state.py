@@ -8,7 +8,6 @@ from sqlalchemy.orm import relationship, backref
 
 class State(BaseModel, Base):
     """ State class """
-
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
     cities = relationship("City", backref="state", cascade='all, delete')
@@ -21,4 +20,3 @@ class State(BaseModel, Base):
             if State.id == city.state_id:
                 list_cities.append(city)
         return list_cities
-        
