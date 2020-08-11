@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+""" create class dbs storage """
 from models.base_model import Base
 from models.user import User
 from models.place import Place
@@ -10,7 +11,6 @@ from os import getenv
 from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-""" create class dbs storage """
 
 database = getenv("HBNB_MYSQL_DB")
 user = getenv("HBNB_MYSQL_USER")
@@ -25,6 +25,7 @@ class DBStorage:
     __session = None
 
     def __init__(self):
+        """init funct"""
         DBStorage.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format
                                            (user, password, host, database),
                                            pool_pre_ping=True)

@@ -15,6 +15,7 @@ class State(BaseModel, Base):
 
     @property
     def cities(self):
+        """cities class"""
         my_list = {}
         all_cities = self.cities
         for city in all_cities:
