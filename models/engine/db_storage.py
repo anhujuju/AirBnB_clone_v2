@@ -25,36 +25,28 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        DBStorage.__engine = create_engine("mysql+mysqldb://{}:{}@{}:3306/{}"
-                                           .format(getenv('HBNB_MYSQL_USER'),
-                                                   getenv('HBNB_MYSQL_PWD'),
-                                                   getenv('HBNB_MYSQL_HOST'),
-                                                   getenv('HBNB_MYSQL_DB')),
+        """init funct"""
+        DBStorage.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format
+                                           (user, password, host, database),
                                            pool_pre_ping=True)
-        if getenv('HBNB_ENV') == 'test':
-            Base.metadata.drop_all(bind=DBStorage.__engine)
+
+        if hbnb_env == 'test':
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in db_storage"""
+        new_dict = {}
         if cls is None:
-            my_query = DBStorage.__session.query(User,
-                                                 State,
-                                                 City,
-                                                 Amenity,
-                                                 Place,
-                                                 Review).all()
-            my_dict = {}
-            for obj in my_query:
-                my_dict.update(
-                    {obj.to_dict()['__class__'] + '.' + obj.id: obj})
-            return my_dict
+            new_query = DBStorage.__session.query(User, State, City,
+                                                  Amenity, Place, Review).all()
+            for obj in new_query:
+                new_dict[obj.to_dict()['__class__'] + '.' + obj.id] = obj
+            return new_dict
         else:
-            my_query = DBStorage.__session.query(cls).all()
-            my_dict = {}
-            for obj in my_query:
-                my_dict.update(
-                    {obj.to_dict()['__class__'] + '.' + obj.id: obj})
-            return my_dict
+            new_query = DBStorage.__session.query(cls).all()
+            for obj in new_query:
+                new_dict[obj.to_dict()['__class__'] + '.' + obj.id] = obj
+            return new_dict
 
     def new(self, obj):
         """Adds new object to db storage"""

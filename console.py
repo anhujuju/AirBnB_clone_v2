@@ -37,6 +37,7 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
+
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -114,60 +115,20 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        _cls = ''
-
         if not args:
             print("** class name missing **")
             return
-        params = args[:]
-        params = params.partition(' ')
-        _cls = params[0]
-        if _cls not in HBNBCommand.classes:
+        data = args.split(" ")
+        if data[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        new_instance = eval(data[0])()
 
-        new_instance = HBNBCommand.classes[_cls]()
-        params = params[2]
-        new_dict = {}
-        while len(params) != 0:
-            params = params.partition(" ")
-            val = params[0].partition("=")
-            _att = val[0]
-            _val = val[2]
-            """ First check if value is integer """
-            if _val.isdecimal():
-                _val = int(_val)
-            else:
-                try:
-                    """ Trying to cast to float """
-                    _val = float(_val)
-                except ValueError:
-                    """ On float cast error, check if valid string """
-                    if _val[0] is '\"' and _val[-1] is '\"':
-                        _val = _val[1:-1]
-                        """ Replacing underscores for spaces """
-                        _val = _val.replace('_', ' ')
-                        index = _val.find('\"', 1)
-                        flag = 1
-                        """ Checking if double quotes(") are escaped(\) """
-                        while flag and index != -1:
-                            if _val[index - 1] != '\\':
-                                flag = 0
-                                break
-                            index = _val.find('\"', index + 1)
-                        if not flag:
-                            """ value skipped """
-                            params = params[2]
-                            continue
-                    else:
-                        """ value skipped """
-                        params = params[2]
-                        continue
-            new_dict[_att] = _val
-            params = params[2]
-
-        new_instance.__dict__.update(new_dict)
-        new_instance.save()
+        for i in range(1, len(data)):
+            key, value = data[i].split("=")
+            value = value.replace("_", " ")
+            setattr(new_instance, key, eval(value))
+        storage.save()
         print(new_instance.id)
 
     def help_create(self):
@@ -362,6 +323,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
