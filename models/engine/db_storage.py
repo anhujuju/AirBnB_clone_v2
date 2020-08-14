@@ -10,7 +10,7 @@ from models.review import Review
 from os import getenv
 from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker, scoped_session
-
+""" create class dbs storage """
 
 database = getenv("HBNB_MYSQL_DB")
 user = getenv("HBNB_MYSQL_USER")

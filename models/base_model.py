@@ -16,7 +16,7 @@ class BaseModel:
     updated_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
     def __init__(self, *args, **kwargs):
-        """Instatntiates a new model"""
+        """Initialize of base model class"""
 
         from datetime import datetime
         from models import storage
@@ -27,6 +27,7 @@ class BaseModel:
                     value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
                 if key != "__class__":
                     setattr(self, key, value)
+            elf.id = str(uuid.uuid4())
 
         else:
             self.id = str(uuid.uuid4())

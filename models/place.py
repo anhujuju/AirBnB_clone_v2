@@ -6,25 +6,6 @@ from models.review import Review
 from sqlalchemy.orm import relationship
 from os import getenv
 
-place_amenity = Table(
-    'place_amenity',
-    Base.metadata,
-    Column(
-        'place_id',
-        String(60),
-        ForeignKey('places.id'),
-        primary_key=True,
-        nullable=False
-    ),
-    Column(
-        'amenity_id',
-        String(60),
-        ForeignKey("amenities.id"),
-        primary_key=True,
-        nullable=False
-    )
-)
-
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -40,39 +21,44 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     amenity_ids = []
+    
     reviews = relationship("Review", backref="place", cascade="all, delete")
+    amenities = relationship("Amenity", secondary='place_amenity',viewonly=False)
 
-
-    if getenv('HBNB_TYPE_STORAGE') == 'db':
-
-        amenities = relationship("Amenity",secondary="place_amenity",viewonly=False,)
+    if getenv('HBNB_TYPE_STORAGE') != 'db':
 
         @property
         def reviews(self):
             '''reviews call relationship'''
-            rev = []
-            for review in self.reviews:
-                if review.place_id == self.id:
-                    rev.append[review]
-            return reviews
-    else:
-        @property
-        def reviews(self):
-            myreviews = []
-            for id, r in models.storage.all(Review).items():
-                if self.id == r.place.id:
-                    myreviews.append(r)
-            return myreviews
+            my_list = {}
+            all_review = self.review
+            for review in all_review:
+                if self.id == review.id:
+                    my_list.append(review)
+            return my_list
 
         @property
         def amenities(self):
-            myamenities = []
-            for a in amenity_ids:
+             """getter amenity that returns the list of Amenity"""
+
+            myamenities = {}
+            all_amenities = self.amenities
+            for a in all_amenities:
                 if self.id == a.id:
                     myamenities.append(a)
             return myamenities
 
         @amenities.setter
-        def amenities(self, amenity):
-            if type(amenity).__name__ == 'Amenity':
-                self.amenity_ids.append(amenity)
+        def amenities(self, obj=None):
+              """Setter amenities"""
+
+            if obj.__class__name__ == 'Amenity':
+                self.amenities_ids.append(obj.id)
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60),
+                             ForeignKey("places.id"),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60), ForeignKey
+                             ('amenities.id'),
+                             primary_key=True, nullable=False))
