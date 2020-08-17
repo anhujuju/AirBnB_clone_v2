@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-#  sets up your web servers for the deployment of web_static
-sudo apt-get update
+# Prepare your web servers
+sudo apt-get -y update
 sudo apt-get -y install nginx
-sudo mkdir -p /data/
-sudo mkdir -p /data/web_static/
-sudo mkdir -p /data/web_static/releases/
-sudo mkdir -p /data/web_static/shared/
-sudo mkdir -p /data/web_static/releases/test/
+sudo mkdir -p "/data/web_static/releases/test/"
+sudo mkdir "/data/web_static/shared/"
 echo "Holiwis" > /data/web_static/releases/test/index.html
-ln -sfn /data/web_static/releases/test/ /data/web_static/current
-chown -R ubuntu:ubuntu /data
-
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+sudo chown -R ubuntu:ubuntu /data/
+content="\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}\n"
+sudo sed -i "38i\ $content" /etc/nginx/sites-enabled/default
+sudo service nginx reload
 sudo service nginx restart
