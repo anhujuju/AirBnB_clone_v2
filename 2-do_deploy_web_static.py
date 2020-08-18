@@ -1,10 +1,28 @@
 #!/usr/bin/python3
 """ Deploys web static"""
 
-from fabric.api import put, run, env
+from fabric.api import put, run, env, local
 from os.path import exists
+from os.path import isdir
+from datetime import datetime
+
+
+env.user = 'ubuntu'
 env.hosts = ['34.75.41.244', '54.227.21.96']
 
+
+def do_pack():
+    """ Package """
+    datu = 'web_static_' + datetime.strftime(datetime.now(), "%Y%m%d%I%M%S")
+    tgz = datu + '.tgz'
+
+    local('mkdir -p versions')
+    dire = 'versions/'
+    file = local('tar -cvzf {}{} web_static'.format(dire, tgz))
+    if isdir('versions'):
+        return dire + tgz
+    else:
+        return None
 
 def do_deploy(archive_path):
     """distributes an archive to the web servers"""
