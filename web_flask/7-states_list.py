@@ -3,6 +3,7 @@
 
 from flask import Flask, render_template
 from models import storage
+from models.state import State
 app = Flask(__name__)
 
 
@@ -56,14 +57,10 @@ def even_odd(n):
 
 
 @app.route('/states_list', strict_slashes=False)
-def states_lst():
-    """ string to be returned """
-    stat = storage.all('State')
-    dicti = {}
-    for i in stat:
-        j = i.to_dict()
-        dicti.setdefault(j["name"], j["id"])
-    return render_template('7-states_list.html', states=dicti)
+def states_list():
+    """Display a HTML page"""
+    states = storage.all(State).values()
+    return render_template('7-states_list.html', states=states)
 
 
 @app.teardown_appcontext
